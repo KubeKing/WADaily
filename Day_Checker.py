@@ -17,8 +17,9 @@ date = (month+' '+day+' '+str(year))
 storedSchedule = eval(open('ScheduleDictStorage.txt', 'r').read())
 def validate():
     try:
-        if storedSchedule['lastUpdate'] == date:
-            validate = True
+        lastUpdate = storedSchedule['lastUpdate']
+        if lastUpdate[2] == year and lastUpdate[0] == month:
+                validate = True
         else:
             validate = False
     except:
@@ -61,7 +62,7 @@ def gatherText():
     return(allText)
 def createSchedule():
     text = gatherText()
-    schedule = {'lastUpdate':date}
+    schedule = {'lastUpdate':[month,day,year]}
     speicals = ['XDAY','SPECIAL','ODD','EVEN']
     for x in range(0,len(text)):
         if text[x] == 'DAY':
