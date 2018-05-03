@@ -3,6 +3,7 @@ import PyPDF2
 from datetime import datetime
 from lxml import html
 import requests
+import json
 pdfFileObj = open('Schedule.pdf', 'rb')
 pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
 year = int(datetime.now().year)
@@ -12,6 +13,17 @@ months = {'1':'January','2':'February','3':'March','4':'April','5':'May',
 '6':'June','7':'July','8':'August','9':'September','10':'October','11':'November','12':'December'}
 month = months[str(datetime.now().month)]
 weekday = weekdays[str(datetime.today().weekday())]
+date = (month+' '+day+' '+str(year))
+storedSchedule = eval(open('ScheduleDictStorage.txt', 'r').read())
+def validate():
+    try:
+        if storedSchedule['lastUpdate'] == date:
+            validate = True
+        else:
+            validate = False
+    except:
+        validate = False
+    return(validate)
 def getLunch():
     foodList = []
     try:
@@ -49,7 +61,7 @@ def gatherText():
     return(allText)
 def createSchedule():
     text = gatherText()
-    schedule = {}
+    schedule = {'lastUpdate':date}
     speicals = ['XDAY','SPECIAL','ODD','EVEN']
     for x in range(0,len(text)):
         if text[x] == 'DAY':
@@ -58,9 +70,15 @@ def createSchedule():
         if text[x] in speicals:
             add = {(text[x+1]+' '+text[x+2]+' '+text[x+3]):(text[x])}
             schedule.update(add)
+    with open('ScheduleDictStorage.txt', 'w') as file:
+        file.write(json.dumps(schedule))
+    file.close()
     return(schedule)
 def whatDay(m,d,y):
-    schedule = createSchedule()
+    if validate() == False:
+        schedule = createSchedule()
+    else:
+        schedule = storedSchedule
     try:
         day = schedule[m+' '+d+' '+y]
     except:
