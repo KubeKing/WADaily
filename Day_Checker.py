@@ -29,7 +29,7 @@ def whiteList():
         numbers.append(str(x))
     strings = ['August', 'September', 'October', 'November', 'December', 'January',
     'February', 'March', 'April', 'May', 'June', 'July', str(year), str(year-1), str(year+1),
-     'DAY', 'XDAY', 'SPEICAL','ODD','EVEN']
+     'DAY', 'XDAY', 'SPECIAL','ODD','EVEN']
     whiteList = strings + numbers
     return(whiteList)
 def gatherText():
@@ -50,7 +50,7 @@ def gatherText():
 def createSchedule():
     text = gatherText()
     schedule = {}
-    speicals = ['XDAY','SPEICAL','ODD','EVEN']
+    speicals = ['XDAY','SPECIAL','ODD','EVEN']
     for x in range(0,len(text)):
         if text[x] == 'DAY':
             add = {(text[x+2]+' '+text[x+3]+' '+text[x+4]):(text[x]+' '+text[x+1])}
@@ -70,7 +70,7 @@ def finalPrint():
     xy = whatDay(month,day,str(year))
     foodList = getLunch()
     final = ''
-    if day == 'Error':
+    if xy == 'Error':
         dayPrint = ('Can not find out the day.\nError no key stored as '+month+' '+day+' '+str(year))
     else:
         if xy == 'ODD' or xy == 'EVEN':
@@ -83,5 +83,4 @@ def finalPrint():
         foodPrint = ('The lunch is: '+foodList[0]+', '+foodList[1]+', '+foodList[2]+', '+foodList[3]+', '+foodList[4])
     final = (dayPrint+'\n'+foodPrint)
     return(final)
-
 print(finalPrint())
