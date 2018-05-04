@@ -1,9 +1,11 @@
 #Created by Trey W.
 import PyPDF2
-from datetime import datetime
-from lxml import html
 import requests
 import json
+from datetime import datetime
+from lxml import html
+from PIL import Image
+
 pdfFileObj = open('Schedule.pdf', 'rb')
 pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
 year = int(datetime.now().year)
@@ -101,5 +103,10 @@ def finalPrint():
     else:
         foodPrint = ('The lunch is: '+foodList[0]+', '+foodList[1]+', '+foodList[2]+', '+foodList[3]+', '+foodList[4])
     final = (dayPrint+'\n'+foodPrint)
+    openSchedule(xy)
     return(final)
+def openSchedule(x):
+    img = Image.open(x+'.jpg')
+    img.show()
+    img.close()
 print(finalPrint())
