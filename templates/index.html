@@ -1,0 +1,122 @@
+$def with (rotation, weekday, foodList, image, events, date)
+<!-- Developed by Trey W. -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WADaily</title>
+  <link rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon"></link>
+  <style>
+      body {text-align: center;
+            font-weight: 300;
+          color: #696a6d;
+          font-style: normal;}
+    h2 {
+      font-family: "crimson", sans-serif;
+      font-weight: 500;
+      font-size: 41px;
+      line-height: 0.65;
+      margin-bottom: 21px;
+      margin-top: 21px;
+      color: #a32136;
+    }
+    #scheduleImage {display:inline-block;}
+    #scheduleRight {display:inline-block;margin-left:10px;position:relative;bottom:$image['bottomPadding'];}
+    #scheduleLeft {display:inline-block;margin-right:10px;position:relative;bottom:$image['bottomPadding'];}
+    #refresh {display:inline-block;margin-top:10px}
+    ul   {text-align: center;}
+
+    .disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    .button {
+        border: none;
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+    }
+  </style>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119002335-1"></script>
+</head>
+
+<body>
+  <div class="Rotation">
+    <h2>Rotation</h2>
+        $if rotation:
+            It is <b>$weekday</b> and it's <b>$rotation</b> rotation!<br/>
+            <p id="date">$date[0] $date[1] $date[2]</p>
+        $else:
+            Could not find the <b>Rotation</b>!
+        $if image:
+            <div>
+            <img id="scheduleLeft" onclick="plusDay(-1)" src='../images/BACKWARD_ARROW.png'>
+            <img id="scheduleImage" src=$image['src'] alt=$image['alt'] width=$image['width'] height=$image['height']>
+            <img id="scheduleRight" onclick="plusDay(1)" src='../images/FORWARD_ARROW.png'>
+            </div>
+            <a href="http://www.wadaily.net/"><img id="refresh" src='../images/REFRESH.png'></a>
+  </div>
+  <div class="Lunch">
+    <h2>Lunch Menu</h2>
+    $if foodList:
+        <p>
+        $for food in foodList:
+            $food<br/>
+        </p>
+    $else:
+        Could not find the <b>lunch</b>!
+  </div>
+  <div class="Events">
+    $if events:
+        <h2>Today's Events</h2>
+        <p>
+        $for y in events:
+            $y<br/>
+        </p>
+    </div>
+    <div class="Footer">
+    <h6>Developed by <b>Trey W.</b><br>
+    This website may have some affiliation with Woodward Academy</h6>
+  </div>
+</body>
+
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-119002335-1');
+
+  Date.prototype.addDays = function(days, foo) {
+      if (foo == true){
+        var date = new Date(this.valueOf());
+      }else{
+        var date = new Date(foo);
+      }
+      date.setDate(date.getDate() + days);
+      return date;
+  }
+
+  var dayIndex = 0;
+  function formatDate(date) {
+    var monthNames = [
+      "January", "February", "March",
+      "April", "May", "June", "July",
+      "August", "September", "October",
+      "November", "December"
+    ];
+
+    var day = date.getDate();
+    var monthIndex = date.getMonth();
+    var year = date.getFullYear();
+
+    return [(monthNames[monthIndex] + ' ' + day + ' ' + year), ('http://www.wadaily.net/?date='+ monthNames[monthIndex] + '%20' + day + '%20' + year)];
+  }
+
+  var date = new Date();
+  var updatedDate = document.getElementById('date').innerHTML;
+
+  function plusDay(n) {
+    window.location = formatDate(date.addDays((dayIndex += n), (updatedDate)))[1]
+  }
+</script>
+</html>
