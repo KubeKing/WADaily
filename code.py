@@ -19,7 +19,7 @@ class index:
             day = (web.websafe(i.date)).split(' ')
             rotation = WA.whatDay(day[0],day[1],day[2])
             longDate = date((int(day[2])), (int(WA.inv_months[day[0]])), (int(day[1])))
-            if rotation is 'Weekend':
+            if rotation == 'Weekend':
                 if longDate.weekday() == 6:
                     longDate = longDate + timedelta(days=-2)
                 elif longDate.weekday() == 5:

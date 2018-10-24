@@ -73,16 +73,16 @@ def whatDay(m,d,y):
 
 def makeImage(rotation, scale):
     if rotation != 'Error':
-        if rotation is 'DAY 8' or rotation is 'DAY 9':
+        if rotation == 'DAY 8' or rotation == 'DAY 9':
             image = {'src':('../images/'+rotation.replace(' ', '')+'.jpg'),'alt':rotation.replace(' ', ''),'width':str(353*scale),'height':str(604* scale), 'bottomPadding':str((604* scale)/2)+'px'}
-        elif rotation is 'XDAY':
+        elif rotation == 'XDAY':
             image = {'src':('../images/'+rotation.replace(' ', '')+'.jpg'),'alt':rotation.replace(' ', ''),'width':str(353* scale),'height':str(740* scale), 'bottomPadding':str((740* scale)/2)+'px'}
-        elif rotation is 'SPRING':
+        elif rotation == 'SPRING':
             image = {'src':('../images/'+rotation.replace(' ', '')+'.jpg'),'alt':rotation.replace(' ', ''),'width':str(401*0.5),'height':str(804*0.5), 'bottomPadding':str((804* scale)/2)+'px'}
         else:
             image = {'src':'../images/'+rotation.replace(' ', '')+'.jpg','alt':rotation.replace(' ', ''),'width':str(350* scale),'height':str(713* scale), 'bottomPadding':str((713* scale)/2)+'px'}
         rotation = ('a '+rotation)
-    if rotation is 'Error':
+    if rotation == 'Error':
         rotation = ''
         image = ''
     return(image)
