@@ -7,4 +7,4 @@ RewriteCond %{REQUEST_URI} !^/cgi-bin/
 RewriteCond %{HTTP_HOST} ^(www\.)?wadaily\.
 
 # Rewrite all those to insert /folder
-RewriteRule ^(.*)$ /cgi-bin/code.py/$1 [L]
+RewriteRule ^(.*)$ WADaily/cgi-bin/code.py/$1 [L]
