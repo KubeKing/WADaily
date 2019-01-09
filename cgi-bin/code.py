@@ -3,7 +3,7 @@
 import web
 import os
 import Day_Update as WA
-from datetime import timedelta, date
+from datetime import date, datetime
 
 urls = (
     '/', 'index',
@@ -17,22 +17,11 @@ class index:
         i = web.input(date = '')
         try:
             day = (web.websafe(i.date)).split(' ')
-            rotation = WA.whatDay(day[0],day[1],day[2])
-            longDate = date((int(day[2])), (int(WA.inv_months[day[0]])), (int(day[1])))
-            if rotation == 'Key Error':
-                if longDate.weekday() == 6:
-                    longDate = longDate + timedelta(days=-2)
-                elif longDate.weekday() == 5:
-                    longDate = longDate + timedelta(days=2)
-                day = WA.getLongDate(longDate)
-                rotation = WA.whatDay(day[0],day[1],day[2])
+            rotation = WA.whatDay(day[0],day[1],day[2],True)
         except:
-            day = WA.date
-            rotation = WA.whatDay(day[0],day[1],day[2])
-            longDate = date((int(day[2])), (int(WA.inv_months[day[0]])), (int(day[1])))
-        if rotation == 'Key Error' or rotation == 'Unknown Error':
-            rotation = ''
-        return render.index(rotation, WA.weekdays[str(longDate.weekday())], WA.getLunch(), WA.makeImage(rotation, 0.6), WA.getAun(), day)
+            day = [(WA.months[str(datetime.now().month)]), (str(datetime.now().day)), (str(datetime.now().year))]
+            rotation = WA.whatDay(day[0],day[1],day[2],False)
+        return render.index(rotation[0], WA.weekdays[str(WA.getShortDate(rotation[1][0], rotation[1][1], rotation[1][2]).weekday())], WA.getLunch(rotation[1][1], rotation[1][0], rotation[1][2]), WA.makeImage(rotation[0], 0.6), WA.getAun(rotation[1][1]), rotation[1])
 
 class images:
     def GET(self,name):
@@ -51,6 +40,6 @@ class images:
             raise web.notfound()
 
 if __name__ == "__main__":
-    web.config.debug = False
+    web.config.debug = True
     app = web.application(urls, globals())
     app.run()
