@@ -6,15 +6,16 @@ import json
 from datetime import datetime, date, timedelta
 from lxml import html
 
-year = int(datetime.now().year)
-day = str(datetime.now().day)
+#year = int(datetime.now().year)
+#month = months[str(datetime.now().month)]
+#day = str(datetime.now().day)
+#weekday = weekdays[str(datetime.today().weekday())]
+#date = [(month),(day),(str(year))]
 weekdays = {'0':'Monday','1':'Tuesday','2':'Wednesday','3':'Thursday','4':'Friday','5':'Saturday','6':'Sunday'}
 months = {'1':'January','2':'February','3':'March','4':'April','5':'May',
 '6':'June','7':'July','8':'August','9':'September','10':'October','11':'November','12':'December'}
 inv_months = {v: k for k, v in months.items()}
-month = months[str(datetime.now().month)]
-weekday = weekdays[str(datetime.today().weekday())]
-date = [(month),(day),(str(year))]
+months_abv = {'January':'Jan'}
 storedSchedule = eval(open('ScheduleDictStorage.txt', 'r').read())
 
 def getLongDate(x):
@@ -27,42 +28,58 @@ def getLongDate(x):
     return([(months[month]),(day),(str(year))])
 
 def getShortDate(m,d,y):
-    return(datetime((int(y)), (int(inv_months[m])), (int(d))))
+    return(datetime((int(y)), (int(inv_months[str(m)])), (int(d))))
 
-def getLunch():
-    foodList = []
-    page = requests.get('https://www.woodward.edu/parents/menu')
-    tree = html.fromstring(page.content)
+def getLunch(d, m, y):
     try:
-        for x, y in enumerate('//div[@class="fsNotes"]/p/text()'):
-            try:
-                food = str((tree.xpath('//div[@class="fsNotes"]/p/text()')[x]))
-                if food in foodList:
-                    return(foodList)
-                else:
-                    foodList.append(food)
-            except:
-                return('')
+        with open('lunchList.json') as json_file: 
+            data = json.load(json_file) 
+            return(data[months_abv[m]+'/'+str(d)+'/'+str(y)])
     except:
-        return('')
-    return(foodList)
+        try:
+            foodDict, foodList, x = {}, [], []
+            #weekday = (getShortDate(m,d,y)).weekday()
+            page = requests.get('https://www.woodward.edu/parents/menu')
+            tree = html.fromstring(page.content)
+            days = tree.xpath('//span[@class="fsDay"]/text()')
+            if d in days:
+                months = tree.xpath('//span[@class="fsMonth"]/text()')
+                years = tree.xpath('//span[@class="fsYear"]/text()')     
+                for item in tree.xpath('//div[@class="fsEventDetails"]//text()'):
+                    if item == '\n\t\t':
+                        if x not in foodList:
+                            foodList.append(x)
+                        else:
+                            del days[0]
+                            del months[0]
+                            del years[0]
+                        x = []
+                    elif item == '\n\t\t\t\t\t':
+                        continue
+                    else:
+                        x.append(item)
+                for i in range(len(foodList)):
+                    foodDict[str(months[i])+'/'+str(days[i])+'/'+str(years[i])] = foodList[i]
+                with open('cgi-bin/lunchList.json', 'w') as outfile:
+                    json.dump(foodDict, outfile)
+                return(foodDict[str(m)+'/'+str(d)+'/'+str(y)])
+            else:
+                return('')
+        except:
+            return('')
 
-def getAun():
+def getAun(day):
     try:
         page = requests.get('https://www.woodward.edu/parents/upper-school/newsletter')
         tree = html.fromstring(page.content)
-        dates = []
-        aunList = []
-        for x in range(5):
-            try:
-                dates.append(tree.xpath('//*[@id="fsEl_24434"]/div/div[2]/div[1]/article['+str(x+1)+']/time/span[2]/text()')[0])
-            except:
-                break
-        for x, y in enumerate(dates):
-            aunList.append((tree.xpath('//*[@class="fsDayContainer"]/article/div/a[1]/text()')[x]))
-        if dates[0] == day:
-            return(aunList)
-        else:
+        aunDict = {}
+        dates = tree.xpath('//span[@class="fsDay"]/text()')
+        aunList = tree.xpath('//a[@class="fsCalendarEventLink"]/text()')
+        for i in range(len(dates)):
+            aunDict[dates[i]] = aunList[i]
+        try:
+            return(aunDict[str(day)])
+        except:
             return('')
     except:
         return('')

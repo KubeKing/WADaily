@@ -79,10 +79,7 @@ $def with (rotation, weekday, foodList, image, events, date)
   <div class="Events">
     <h2>Today's Events</h2>
     $if events:
-        <p>
-        $for y in events:
-            $y<br/>
-        </p>
+        <p>$events</p>
     $else:
         <p>No events.</p>
   </div>
