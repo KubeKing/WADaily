@@ -1,10 +1,5 @@
 # Folders
 cgi-bin/__pycache__/
 BACKUP/
-
-#Files
-
-#File Types
 .vscode/
-
-
+.git/
