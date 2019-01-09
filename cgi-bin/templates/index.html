@@ -1,7 +1,17 @@
 $def with (rotation, weekday, foodList, image, events, date)
 <!-- Developed by Trey W. -->
 <!DOCTYPE html>
-<html>
+<html>>
+<!--
+                         Devloped by Trey W.
+         db   d8b   db  .d8b.  d8888b.  .d8b.  d888888b db      db    db
+         88   I8I   88 d8' `8b 88  `8D d8' `8b   `88'   88      `8b  d8'
+         88   I8I   88 88ooo88 88   88 88ooo88    88    88       `8bd8'
+         Y8   I8I   88 88~~~88 88   88 88~~~88    88    88         88
+         `8b d8'8b d8' 88   88 88  .8D 88   88   .88.   88booo.    88
+          `8b8' `8d8'  YP   YP Y8888D' YP   YP Y888888P Y88888P    YP
+                        21twalker@woodward.edu
+-->
 <head>
   <title>WADaily</title>
   <link rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon"></link>
@@ -23,17 +33,19 @@ $def with (rotation, weekday, foodList, image, events, date)
       margin-top: 21px;
       color: #a32136;
     }
+    a{text-decoration: none;}
+    ul{text-align: center;}
     #scheduleLeft {margin-right:10px;position:relative;bottom:$image['bottomPadding'];}
     #scheduleImage {display:inline-block;position:relative;}
     #scheduleRight {margin-left:10px;position:relative;bottom:$image['bottomPadding'];}
     #refresh {margin-top:10px}
+
     .material-icons.md-dark {color: rgba(0, 0, 0, 1);}
     .material-icons.md-36 {font-size:38px;width:38px;height:38px;}
     .material-icons.md-darkish {color: rgba(0, 0, 0, 0.75)}
     .button .md-dark, .button:hover .md-darkish {display: none;}
     .button:hover .md-dark {display: inline-block;text-shadow:1px 1px 1.5px rgba(0,0,0,0.5);}
     .disabled {opacity:0.6;cursor:not-allowed;}
-    ul   {text-align: center;}
   </style>
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119002335-1"></script>
 </head>
@@ -61,7 +73,7 @@ $def with (rotation, weekday, foodList, image, events, date)
         <i id="scheduleRight" class="material-icons md-36 md-dark">arrow_forward</i>
       </a>
       </div>
-      <a href="http://127.0.0.1:8080/" class="button">
+      <a href="http://127.0.0.1/" class="button">
         <i id="refresh" class="material-icons md-36 md-darkish">refresh</i>
         <i id="refresh" class="material-icons md-36 md-dark">refresh</i>
       </a>
@@ -119,7 +131,7 @@ $def with (rotation, weekday, foodList, image, events, date)
     var monthIndex = date.getMonth();
     var year = date.getFullYear();
 
-    return [(monthNames[monthIndex] + ' ' + day + ' ' + year), ('http://127.0.0.1:8080/?date='+ monthNames[monthIndex] + '%20' + day + '%20' + year)];
+    return [(monthNames[monthIndex] + ' ' + day + ' ' + year), ('http://127.0.0.1/?date='+ monthNames[monthIndex] + '%20' + day + '%20' + year)];
   }
 
   var date = new Date();
