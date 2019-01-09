@@ -20,7 +20,7 @@ class index:
             rotation = WA.whatDay(day[0],day[1],day[2],True)
         except:
             day = WA.date
-            rotation = WA.whatDay(day[0],day[1],day[2],False)
+            rotation = WA.whatDay(day[0],day[1],day[2],True)
         return render.index(rotation[0], WA.weekdays[str(WA.getShortDate(rotation[1][0], rotation[1][1], rotation[1][2]).weekday())], WA.getLunch(), WA.makeImage(rotation[0], 0.6), WA.getAun(), rotation[1])
 
 class images:

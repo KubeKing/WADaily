@@ -18,10 +18,12 @@ date = [(month),(day),(str(year))]
 storedSchedule = eval(open('ScheduleDictStorage.txt', 'r').read())
 
 def getLongDate(x):
+    print(x)
     date = x.timetuple()
     year = str(date.tm_year)
     month = str(date.tm_mon)
     day = str(date.tm_mday)
+    print([(months[month]),(day),(str(year))])
     return([(months[month]),(day),(str(year))])
 
 def getShortDate(m,d,y):
@@ -72,10 +74,10 @@ def whatDay(m,d,y,doMath):
     except KeyError:
         if doMath == True:
             shortDate = getShortDate(m,d,y)
-            if longDate.weekday() == 6:
+            if shortDate.weekday() == 6:
                 longDate = getLongDate(shortDate + timedelta(days=-2))
                 day = storedSchedule[longDate[0]+' '+longDate[1]+' '+longDate[2]]
-            elif longDate.weekday() == 5:
+            elif shortDate.weekday() == 5 or shortDate.weekday() == '5':
                 longDate = getLongDate(shortDate + timedelta(days=2))
                 day = storedSchedule[longDate[0]+' '+longDate[1]+' '+longDate[2]]
             else:
