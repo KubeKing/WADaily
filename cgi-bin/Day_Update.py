@@ -19,12 +19,10 @@ months_abv = {'January':'Jan'}
 storedSchedule = eval(open('ScheduleDictStorage.txt', 'r').read())
 
 def getLongDate(x):
-    print(x)
     date = x.timetuple()
     year = str(date.tm_year)
     month = str(date.tm_mon)
     day = str(date.tm_mday)
-    print([(months[month]),(day),(str(year))])
     return([(months[month]),(day),(str(year))])
 
 def getShortDate(m,d,y):
