@@ -3,3 +3,4 @@ cgi-bin/__pycache__/
 BACKUP/
 .vscode/
 .git/
+TEMP/

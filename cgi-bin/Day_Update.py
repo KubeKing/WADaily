@@ -58,7 +58,7 @@ def getLunch(d, m, y):
                         x.append(item)
                 for i in range(len(foodList)):
                     foodDict[str(months[i])+'/'+str(days[i])+'/'+str(years[i])] = foodList[i]
-                with open('cgi-bin/lunchList.json', 'w') as outfile:
+                with open('lunchList.json', 'w') as outfile:
                     json.dump(foodDict, outfile)
                 return(foodDict[str(m)+'/'+str(d)+'/'+str(y)])
             else:
@@ -91,10 +91,16 @@ def whatDay(m,d,y,doMath):
             shortDate = getShortDate(m,d,y)
             if shortDate.weekday() == 6:
                 longDate = getLongDate(shortDate + timedelta(days=-2))
-                day = storedSchedule[longDate[0]+' '+longDate[1]+' '+longDate[2]]
+                try:
+                    day = storedSchedule[longDate[0]+' '+longDate[1]+' '+longDate[2]]
+                except:
+                    day = 'Key Error'
             elif shortDate.weekday() == 5 or shortDate.weekday() == '5':
                 longDate = getLongDate(shortDate + timedelta(days=2))
-                day = storedSchedule[longDate[0]+' '+longDate[1]+' '+longDate[2]]
+                try:
+                    day = storedSchedule[longDate[0]+' '+longDate[1]+' '+longDate[2]]
+                except:
+                    day = 'Key Error'
             else:
                 day = 'Key Error'
         else:
