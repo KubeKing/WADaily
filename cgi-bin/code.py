@@ -21,7 +21,7 @@ class index:
         except:
             day = [(WA.months[str(datetime.now().month)]), (str(datetime.now().day)), (str(datetime.now().year))]
             rotation = WA.whatDay(day[0],day[1],day[2],False)
-        return render.index(rotation[0], WA.weekdays[str(WA.getShortDate(rotation[1][0], rotation[1][1], rotation[1][2]).weekday())], WA.getLunch(rotation[1][1], rotation[1][0], rotation[1][2]), WA.makeImage(rotation[0], 0.6), WA.getAun(rotation[1][1]), rotation[1])
+        return render.index(rotation[0], WA.weekdays[str(WA.getShortDate(rotation[1][0], rotation[1][1], rotation[1][2]).weekday())], WA.getLunch(rotation[1][1], rotation[1][0], rotation[1][2]), WA.makeImage(rotation[0], 0.65), WA.getAun(rotation[1][1]), rotation[1], WA.week_range(WA.getShortDate(rotation[1][0], rotation[1][1], rotation[1][2])))
 
 class images:
     def GET(self,name):

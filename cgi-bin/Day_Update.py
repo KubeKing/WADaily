@@ -5,6 +5,7 @@ import requests
 import json
 from datetime import datetime, date, timedelta
 from lxml import html
+from PIL import Image
 
 #year = int(datetime.now().year)
 #month = months[str(datetime.now().month)]
@@ -111,19 +112,38 @@ def whatDay(m,d,y,doMath):
 
 def makeImage(rotation, scale):
     if rotation != 'Unknown Error' and rotation != '' and rotation != 'Key Error':
-        if rotation == 'DAY 8' or rotation == 'DAY 9':
-            image = {'src':('../images/'+rotation.replace(' ', '')+'.jpg'),'alt':rotation.replace(' ', ''),'width':str(353*scale),'height':str(604* scale),
-            'bottomPadding':str((604* scale)/2)+'px'}
-        elif rotation == 'XDAY':
-            image = {'src':('../images/'+rotation.replace(' ', '')+'.jpg'),'alt':rotation.replace(' ', ''),'width':str(353* scale),'height':str(740* scale),
-            'bottomPadding':str((740* scale)/2)+'px'}
-        elif rotation == 'SPRING':
-            image = {'src':('../images/'+rotation.replace(' ', '')+'.jpg'),'alt':rotation.replace(' ', ''),'width':str(401*0.5),'height':str(804*0.5),
-            'bottomPadding':str((804* scale)/2)+'px'}
-        else:
-            image = {'src':'../images/'+rotation.replace(' ', '')+'.jpg','alt':rotation.replace(' ', ''),'width':str(350* scale),'height':str(713* scale),
-            'bottomPadding':str((713* scale)/2)+'px'}
+        size = (Image.open('images/'+rotation.replace(' ', '')+'.jpg')).size
+        image = {'src':('../images/'+rotation.replace(' ', '')+'.jpg'),'alt':rotation,'width':str(size[0]* scale),'height':str(size[1]* scale),
+            'bottomPadding':str((size[1]* scale)/2)+'px','halfWidth':str((size[0]* scale)/2)}
         rotation = ('a '+rotation)
     else:
-        image = {'src':'', 'bottomPadding':'-10px'}
+        image = {'src':'', 'bottomPadding':'-10px', 'halfWidth':'0', 'height':'0'}
     return(image)
+
+def week_range(date):
+    year, week, dow = date.isocalendar()
+    if dow == 7:
+        start_date = date
+    else:
+        start_date = date - timedelta(dow)
+
+    n = start_date + timedelta(1)
+    days = []
+    for i in range(5):
+        try:
+            loDa = getLongDate(n)
+            days.append([(makeImage((whatDay(loDa[0], loDa[1], loDa[2], False))[0], 0.65)), weekdays[str(n.weekday())][0]])
+        except:
+            days.append({'src':'', 'bottomPadding':'-10px', 'halfWidth':'0px', 'height':'0px'})
+        n = n + timedelta(1)
+    tallest = 0
+    for i in days:
+        try:
+            if float(i[0]['height']) > tallest:
+                tallest = float(i[0]['height'])
+        except:
+            pass
+    for i in days:
+        i[0]['bottomPadding'] = ((str((tallest - float(i[0]['height']))/2))+'px')
+    days.append((str(tallest/2))+'px')
+    return(days)
