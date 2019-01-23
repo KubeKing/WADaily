@@ -1,6 +1,5 @@
 #!/home/jamwal77/opt/python-3.6.2/bin/python3
 #Created by Trey W.
-import PyPDF2
 import requests
 import json
 from datetime import datetime, date, timedelta
@@ -121,6 +120,7 @@ def makeImage(rotation, scale):
     return(image)
 
 def week_range(date):
+    weekData = {'rotations': [], 'misc': {}}
     year, week, dow = date.isocalendar()
     if dow == 7:
         start_date = date
@@ -128,22 +128,27 @@ def week_range(date):
         start_date = date - timedelta(dow)
 
     n = start_date + timedelta(1)
-    days = []
     for i in range(5):
         try:
             loDa = getLongDate(n)
-            days.append([(makeImage((whatDay(loDa[0], loDa[1], loDa[2], False))[0], 0.65)), weekdays[str(n.weekday())][0]])
+            x = {'rotation':(makeImage((whatDay(loDa[0], loDa[1], loDa[2], False))[0], 0.65)), 'day':weekdays[str(n.weekday())][0]}
+            if x['rotation']['src']:
+                weekData['rotations'].append(x)
         except:
-            days.append({'src':'', 'bottomPadding':'-10px', 'halfWidth':'0px', 'height':'0px'})
+            pass
         n = n + timedelta(1)
     tallest = 0
+    days = weekData['rotations']
     for i in days:
         try:
-            if float(i[0]['height']) > tallest:
-                tallest = float(i[0]['height'])
+            if float(i['rotation']['height']) > tallest:
+                tallest = float(i['rotation']['height'])
         except:
             pass
     for i in days:
-        i[0]['bottomPadding'] = ((str((tallest - float(i[0]['height']))/2))+'px')
-    days.append((str(tallest/2))+'px')
-    return(days)
+        i['rotation']['bottomPadding'] = ((str((tallest - float(i['rotation']['height']))/2))+'px')
+    weekData['misc']['tallest'] = ((str(tallest/2))+'px')
+    weekData['misc']['totalWidth'] = 0
+    for i in days:
+        weekData['misc']['totalWidth'] = float(weekData['misc']['totalWidth']) + float(i['rotation']['halfWidth'])
+    return(weekData)

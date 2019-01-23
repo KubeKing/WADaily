@@ -1,6 +1,6 @@
 $def with (rotation, weekday, foodList, image, events, date, weekView)
-<!-- Developed by Trey W. -->
 <!DOCTYPE html>
+<!-- Developed by Trey W. -->
 <html>
 <!--
                          Devloped by Trey W.
@@ -40,6 +40,17 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
     .weekView {display:none;position:relative;margin-right:-4px;object-fit: cover;object-position: 100% 0;}
     #scheduleRight {margin-left:10px;position:relative;bottom:$image['bottomPadding'];}
     #refresh {margin-top:10px}
+
+    .bellow {
+      position: relative;
+      left: 0;
+      display: block;
+      top: 75%;
+      width: 100%;
+      text-align: center;
+      font-size: 18px;
+      z-index: 1;
+    }
 
     .img-btn-group .buttonRed {
       background-color: white; 
@@ -82,8 +93,8 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
         <button id="btn-day" class="buttonRed" onclick="viewChange('day')">Day</button>
         <button id="btn-week" class="buttonRed" onclick="viewChange('week')">Week</button>
       </div>
-      <p id="bottomData" style="display:none">[$weekView[5][0], $image['bottomPadding']]</p>
-      <div>
+      <p id="bottomData" style="display:none">[$weekView['misc']['tallest'], $image['bottomPadding']]</p>
+      <div style="position:relative;z-index:3;">
       <a = href="#" onclick="plusDay(-1)"class="button">
         <i id="scheduleLeft" class="material-icons md-36 md-darkish">arrow_backward</i>
         <i id="scheduleLeft" class="material-icons md-36 md-dark">arrow_backward</i>
@@ -92,25 +103,16 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
           <img id="scheduleImage" src=$image['src'] alt=$image['alt'] width=$image['width'] height=$image['height']>
       $else:
           <b id="weekdayDi" style="display:inline-block;margin-left:30px;margin-right:30px;">$weekday</b>
-      $if weekView[0][0]['src']:
-          <img class="weekView" src=$weekView[0][0]['src'] width=$weekView[0][0]['halfWidth'] height=$weekView[0][0]['height'] style="position:relative;bottom:$weekView[0][0]['bottomPadding']">
-      $if weekView[1][0]['src']:
-          <img class="weekView" src=$weekView[1][0]['src'] width=$weekView[1][0]['halfWidth'] height=$weekView[1][0]['height'] style="position:relative;bottom:$weekView[1][0]['bottomPadding']">
-      $if weekView[2][0]['src']:
-          <img class="weekView" src=$weekView[2][0]['src'] width=$weekView[2][0]['halfWidth'] height=$weekView[2][0]['height'] style="position:relative;bottom:$weekView[2][0]['bottomPadding']">
-      $if weekView[3][0]['src']:
-          <img class="weekView" src=$weekView[3][0]['src'] width=$weekView[3][0]['halfWidth'] height=$weekView[3][0]['height'] style="position:relative;bottom:$weekView[3][0]['bottomPadding']">
-      $if weekView[4][0]['src']:
-          <img class="weekView" src=$weekView[4][0]['src'] width=$weekView[4][0]['halfWidth'] height=$weekView[4][0]['height'] style="position:relative;bottom:$weekView[4][0]['bottomPadding']">
+
+      $for i in range(len(weekView['rotations'])):
+          <img class="weekView" src=$weekView['rotations'][i]['rotation']['src'] width=$weekView['rotations'][i]['rotation']['halfWidth'] height=$weekView['rotations'][i]['rotation']['height'] style="position:relative;bottom:$weekView['rotations'][i]['rotation']['bottomPadding']">
+          <div style="display:block;position: absolute;left: 5px;top:$weekView['misc']['tallest'];width: 100%;text-align: center;font-size: 18px;z-index: 1;">$weekView['rotations'][i]['day']</div>
+
       <a href="#" class="button" onclick="plusDay(1)">
         <i id="scheduleRight" class="material-icons md-36 md-darkish">arrow_forward</i>
         <i id="scheduleRight" class="material-icons md-36 md-dark">arrow_forward</i>
       </a>
       </div>
-      $for dow in weekView:
-          $dow[1]
-
-      <br>
       <a href="http://127.0.0.1:8080/" class="button">
         <i id="refresh" class="material-icons md-36 md-darkish">refresh</i>
         <i id="refresh" class="material-icons md-36 md-dark">refresh</i>
