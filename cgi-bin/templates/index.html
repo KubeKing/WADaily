@@ -35,22 +35,13 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
     }
     a{text-decoration: none;}
     ul{text-align: center;}
-    #scheduleLeft {margin-right:10px;position:relative;bottom:$image['bottomPadding'];}
+    .scheduleLeft {margin-right:10px;position:relative;bottom:$image['bottomPadding'];}
     #scheduleImage {display:inline-block;position:relative;}
-    .weekView {display:none;position:relative;margin-right:-4px;object-fit: cover;object-position: 100% 0;}
-    #scheduleRight {margin-left:10px;position:relative;bottom:$image['bottomPadding'];}
+    .weekView {display:none;position:relative;}
+    .weekView.img {margin-right:-4px;object-fit: cover;object-position: 100% 0;}
+    .days {font-size:140%}
+    .scheduleRight {margin-left:10px;position:relative;bottom:$image['bottomPadding'];}
     #refresh {margin-top:10px}
-
-    .bellow {
-      position: relative;
-      left: 0;
-      display: block;
-      top: 75%;
-      width: 100%;
-      text-align: center;
-      font-size: 18px;
-      z-index: 1;
-    }
 
     .img-btn-group .buttonRed {
       background-color: white; 
@@ -93,24 +84,31 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
         <button id="btn-day" class="buttonRed" onclick="viewChange('day')">Day</button>
         <button id="btn-week" class="buttonRed" onclick="viewChange('week')">Week</button>
       </div>
-      <p id="bottomData" style="display:none">[$weekView['misc']['tallest'], $image['bottomPadding']]</p>
-      <div style="position:relative;z-index:3;">
+      <p id="bottomData" style="display:none">$weekView['misc']['tallest'];$image['bottomPadding']</p>
+      <div>
       <a = href="#" onclick="plusDay(-1)"class="button">
-        <i id="scheduleLeft" class="material-icons md-36 md-darkish">arrow_backward</i>
-        <i id="scheduleLeft" class="material-icons md-36 md-dark">arrow_backward</i>
+        <i class="scheduleLeft material-icons md-36 md-darkish">arrow_backward</i>
+        <i class="scheduleLeft material-icons md-36 md-dark">arrow_backward</i>
       </a>
       $if image['src']:
           <img id="scheduleImage" src=$image['src'] alt=$image['alt'] width=$image['width'] height=$image['height']>
       $else:
           <b id="weekdayDi" style="display:inline-block;margin-left:30px;margin-right:30px;">$weekday</b>
-
-      $for i in range(len(weekView['rotations'])):
-          <img class="weekView" src=$weekView['rotations'][i]['rotation']['src'] width=$weekView['rotations'][i]['rotation']['halfWidth'] height=$weekView['rotations'][i]['rotation']['height'] style="position:relative;bottom:$weekView['rotations'][i]['rotation']['bottomPadding']">
-          <div style="display:block;position: absolute;left: 5px;top:$weekView['misc']['tallest'];width: 100%;text-align: center;font-size: 18px;z-index: 1;">$weekView['rotations'][i]['day']</div>
-
+        
+      <table class="weekView" style="border-collapse:collapse;right:6px;">
+      <tr>
+      $for n in weekView['rotations']:
+          <td><img class="weekView img" src=$n['rotation']['src'] width=$n['rotation']['halfWidth'] height=$n['rotation']['height'] style="bottom:$n['rotation']['bottomPadding']"></td>
+      </tr>
+      <tr>
+      $for n in weekView['rotations']:
+            <td class="days">$n['day']</td>
+      </tr>
+      </table>
+      
       <a href="#" class="button" onclick="plusDay(1)">
-        <i id="scheduleRight" class="material-icons md-36 md-darkish">arrow_forward</i>
-        <i id="scheduleRight" class="material-icons md-36 md-dark">arrow_forward</i>
+        <i class="scheduleRight material-icons md-36 md-darkish">arrow_forward</i>
+        <i class="scheduleRight material-icons md-36 md-dark">arrow_forward</i>
       </a>
       </div>
       <a href="http://127.0.0.1:8080/" class="button">
@@ -163,33 +161,37 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
     try{var imgDay = document.getElementById('scheduleImage');}catch(err){}
     var imgWeek = document.getElementsByClassName('weekView');
     var arrow = {
-      'left':document.getElementById('scheduleLeft'),
-      'right':document.getElementById('scheduleRight')};
-    var bottomData = document.getElementById('bottomData').innerHTML;
+      'left':document.getElementsByClassName('scheduleLeft'),
+      'right':document.getElementsByClassName('scheduleRight')};
+    var bottomData = (document.getElementById('bottomData').innerHTML).split(';');
+    for(var i = 0; i < bottomData.length; i++){bottomData[i] = bottomData[i].replace('px', '');bottomData[i] = Number(bottomData[i]);}
+    var displayDOW = document.getElementsByClassName('days')[0];
     if(type == 'day'){
       try{imgDay.style.display = "inline-block";}catch(err){}
-      arrow['left'].style.bottom = bottomData[1];
-      arrow['right'].style.bottom = bottomData[1];
       for(var i = 0; i < imgWeek.length; i++){
         imgWeek[i].style.display = "none";
       }
       try{
         var weekdayDi = document.getElementById('weekdayDi');
         weekdayDi.style.display = "inline";
+      }catch(err){}
+      for(var i = 0; i < 2; i++){
+        arrow['left'][i].style.bottom = String(bottomData[1])+"px";
+        arrow['right'][i].style.bottom = String(bottomData[1])+"px";
       }
-      catch(err){}
     }else if(type == 'week'){
       try{imgDay.style.display = "none";}catch(err){}
-      arrow['left'].style.bottom = bottomData[0];
-      arrow['right'].style.bottom = bottomData[0];
-      for(var i = 0; i < imgWeek.length; i++){
-        imgWeek[i].style.display = "inline-block";
-      }
       try{
         var weekdayDi = document.getElementById('weekdayDi');
         weekdayDi.style.display = "none";
+      }catch(err){}
+      for(var i = 0; i < imgWeek.length; i++){
+        imgWeek[i].style.display = "inline-block";
       }
-      catch(err){}
+      for(var i = 0; i < 2; i++){
+        arrow['left'][i].style.bottom = String(bottomData[0]+displayDOW.clientHeight)+"px";
+        arrow['right'][i].style.bottom = String(bottomData[0]+displayDOW.clientHeight)+"px";
+      }
     }
   }
 

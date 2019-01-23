@@ -148,7 +148,4 @@ def week_range(date):
     for i in days:
         i['rotation']['bottomPadding'] = ((str((tallest - float(i['rotation']['height']))/2))+'px')
     weekData['misc']['tallest'] = ((str(tallest/2))+'px')
-    weekData['misc']['totalWidth'] = 0
-    for i in days:
-        weekData['misc']['totalWidth'] = float(weekData['misc']['totalWidth']) + float(i['rotation']['halfWidth'])
     return(weekData)
