@@ -1,6 +1,5 @@
 $def with (rotation, weekday, foodList, image, events, date, weekView)
 <!DOCTYPE html>
-<!-- Developed by Trey W. -->
 <html>
 <!--
                          Devloped by Trey W.
@@ -203,6 +202,7 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
         <i id="refresh" class="material-icons md-36 md-darkish">refresh</i>
         <i id="refresh" class="material-icons md-36 md-dark">refresh</i>
       </a>
+      <h5>(Working fixing images appearing 1 second after load)</h5>
   </div>
   <div class="Lunch">
     <h2>Lunch Menu</h2>
@@ -332,5 +332,19 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
   span.onclick = function() { 
     modal.style.display = "none";
   }
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  async function reload() {
+    console.log('Reloading');
+    await sleep(1000);
+    console.log('Done');
+    var images = document.getElementsByTagName('img');
+    for(var i = 0; i < images.length; i++){images[i].src = images[i].src;}
+  }
+
+  reload();
 </script>
 </html>
