@@ -131,7 +131,7 @@ def week_range(date):
     for i in range(5):
         try:
             loDa = getLongDate(n)
-            x = {'rotation':(makeImage((whatDay(loDa[0], loDa[1], loDa[2], False))[0], 0.65)), 'day':weekdays[str(n.weekday())][0]}
+            x = {'rotation':(makeImage((whatDay(loDa[0], loDa[1], loDa[2], False))[0], 0.65)), 'day':weekdays[str(n.weekday())][:3]}
             if x['rotation']['src']:
                 weekData['rotations'].append(x)
         except:

@@ -35,13 +35,13 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
     }
     a{text-decoration: none;}
     ul{text-align: center;}
-    .scheduleLeft {margin-right:10px;position:relative;bottom:$image['bottomPadding'];}
+    .scheduleLeft {margin-right:10px;position:relative;bottom:$image['bottomPadding'];cursor: pointer;}
     #scheduleImage {display:inline-block;position:relative;}
-    .weekView {display:none;position:relative;}
-    .weekView.img {margin-right:-4px;object-fit: cover;object-position: 100% 0;}
-    .days {font-size:140%}
-    .scheduleRight {margin-left:10px;position:relative;bottom:$image['bottomPadding'];}
-    #refresh {margin-top:10px}
+    #weekView {display:none;position:relative;}
+    .weekImg {position:relative;margin-right:-4px;object-fit: cover;object-position: 100% 0;}
+    .days {font-size:145%}
+    .scheduleRight {margin-left:10px;position:relative;bottom:$image['bottomPadding'];cursor: pointer;}
+    #refresh {margin-top:10px;cursor: pointer;}
 
     .img-btn-group .buttonRed {
       background-color: white; 
@@ -67,6 +67,90 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
     .button .md-dark, .button:hover .md-darkish {display: none;}
     .button:hover .md-dark {display: inline-block;text-shadow:1px 1px 1.5px rgba(0,0,0,0.5);}
     .disabled {opacity:0.6;cursor:not-allowed;}
+
+    .myImg {
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    
+    .myImg:hover {opacity: 0.7;}
+    
+    /* The Modal (background) */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      padding-top: 100px; /* Location of the box */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+    }
+    
+    /* Modal Content (image) */
+    .modal-content {
+      margin: auto;
+      display: block;
+      max-width: 700px;
+    }
+    
+    /* Caption of Modal Image */
+    #caption {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+      text-align: center;
+      color: #ccc;
+      padding: 10px 0;
+      height: 150px;
+    }
+    
+    /* Add Animation */
+    .modal-content, #caption {  
+      -webkit-animation-name: zoom;
+      -webkit-animation-duration: 0.6s;
+      animation-name: zoom;
+      animation-duration: 0.6s;
+    }
+    
+    @-webkit-keyframes zoom {
+      from {-webkit-transform: scale(0)} 
+      to {-webkit-transform: scale(1)}
+    }
+    
+    @keyframes zoom {
+      from {transform: scale(0.1)} 
+      to {transform: scale(1)}
+    }
+    
+    /* The Close Button */
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      color: #f1f1f1;
+      font-size: 40px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    
+    .close:hover,
+    .close:focus {
+      color: #bbb;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    
+    /* 100% Image Width on Smaller Screens */
+    @media only screen and (max-width: 700px){
+      .modal-content {
+        width: 100%;
+      }
+    }
   </style>
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119002335-1"></script>
 </head>
@@ -86,6 +170,7 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
       </div>
       <p id="bottomData" style="display:none">$weekView['misc']['tallest'];$image['bottomPadding']</p>
       <div>
+      
       <a = href="#" onclick="plusDay(-1)"class="button">
         <i class="scheduleLeft material-icons md-36 md-darkish">arrow_backward</i>
         <i class="scheduleLeft material-icons md-36 md-dark">arrow_backward</i>
@@ -95,17 +180,20 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
       $else:
           <b id="weekdayDi" style="display:inline-block;margin-left:30px;margin-right:30px;">$weekday</b>
         
-      <table class="weekView" style="border-collapse:collapse;right:6px;">
+      <table id="weekView" style="border-collapse:collapse;right:6px;">
       <tr>
       $for n in weekView['rotations']:
-          <td><img class="weekView img" src=$n['rotation']['src'] width=$n['rotation']['halfWidth'] height=$n['rotation']['height'] style="bottom:$n['rotation']['bottomPadding']"></td>
+          <td><img class="weekImg myImg" src=$n['rotation']['src'] width=$n['rotation']['halfWidth'] height=$n['rotation']['height'] alt=$n['day'] style="bottom:$n['rotation']['bottomPadding']"></td>
       </tr>
       <tr>
       $for n in weekView['rotations']:
-            <td class="days">$n['day']</td>
+          $if weekday[:3] == n['day'] and foodList:
+              <td class="days"><b>$n['day']</b></td>
+          $else:
+              <td class="days">$n['day']</td>
       </tr>
       </table>
-      
+
       <a href="#" class="button" onclick="plusDay(1)">
         <i class="scheduleRight material-icons md-36 md-darkish">arrow_forward</i>
         <i class="scheduleRight material-icons md-36 md-dark">arrow_forward</i>
@@ -137,6 +225,13 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
     <h6>Developed by <b>Trey W.</b><br>
     This website may have some affiliation with Woodward Academy</h6>
   </div>
+
+  <div id="myModal" class="modal">
+      <span class="close">×</span>
+      <img class="modal-content" id="img01">
+      <div id="caption"></div>
+  </div>
+    
 </body>
 
 <script>
@@ -156,43 +251,40 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
       return date;
   }
 
-
-  function viewChange(type){
     try{var imgDay = document.getElementById('scheduleImage');}catch(err){}
-    var imgWeek = document.getElementsByClassName('weekView');
+    var imgWeek = document.getElementById('weekView');
     var arrow = {
       'left':document.getElementsByClassName('scheduleLeft'),
       'right':document.getElementsByClassName('scheduleRight')};
     var bottomData = (document.getElementById('bottomData').innerHTML).split(';');
     for(var i = 0; i < bottomData.length; i++){bottomData[i] = bottomData[i].replace('px', '');bottomData[i] = Number(bottomData[i]);}
     var displayDOW = document.getElementsByClassName('days')[0];
-    if(type == 'day'){
-      try{imgDay.style.display = "inline-block";}catch(err){}
-      for(var i = 0; i < imgWeek.length; i++){
-        imgWeek[i].style.display = "none";
+    bottomData[1] = String(bottomData[1])+"px";
+
+    function viewChange(type){
+      if(type == 'day'){
+        try{imgDay.style.display = "inline-block";}catch(err){}
+        imgWeek.style.display = "none";
+        try{
+          var weekdayDi = document.getElementById('weekdayDi');
+          weekdayDi.style.display = "inline";
+        }catch(err){}
+        for(var i = 0; i < 2; i++){
+          arrow['left'][i].style.bottom = bottomData[1];
+          arrow['right'][i].style.bottom = bottomData[1];
+        }
+      }else if(type == 'week'){
+        try{imgDay.style.display = "none";}catch(err){}
+        try{
+          var weekdayDi = document.getElementById('weekdayDi');
+          weekdayDi.style.display = "none";
+        }catch(err){}
+        imgWeek.style.display = "inline-block";
+        for(var i = 0; i < 2; i++){
+          arrow['left'][i].style.bottom = String(bottomData[0]+displayDOW.clientHeight)+"px";
+          arrow['right'][i].style.bottom = String(bottomData[0]+displayDOW.clientHeight)+"px";
+        }
       }
-      try{
-        var weekdayDi = document.getElementById('weekdayDi');
-        weekdayDi.style.display = "inline";
-      }catch(err){}
-      for(var i = 0; i < 2; i++){
-        arrow['left'][i].style.bottom = String(bottomData[1])+"px";
-        arrow['right'][i].style.bottom = String(bottomData[1])+"px";
-      }
-    }else if(type == 'week'){
-      try{imgDay.style.display = "none";}catch(err){}
-      try{
-        var weekdayDi = document.getElementById('weekdayDi');
-        weekdayDi.style.display = "none";
-      }catch(err){}
-      for(var i = 0; i < imgWeek.length; i++){
-        imgWeek[i].style.display = "inline-block";
-      }
-      for(var i = 0; i < 2; i++){
-        arrow['left'][i].style.bottom = String(bottomData[0]+displayDOW.clientHeight)+"px";
-        arrow['right'][i].style.bottom = String(bottomData[0]+displayDOW.clientHeight)+"px";
-      }
-    }
   }
 
   var dayIndex = 0;
@@ -208,14 +300,37 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
     var monthIndex = date.getMonth();
     var year = date.getFullYear();
 
-    return [(monthNames[monthIndex] + ' ' + day + ' ' + year), ('http://127.0.0.1:8080/?date='+ monthNames[monthIndex] + '%20' + day + '%20' + year)];
+    return('http://127.0.0.1:8080/?date='+ monthNames[monthIndex] + '%20' + day + '%20' + year);
   }
 
   var date = new Date();
   var updatedDate = document.getElementById('date').innerHTML;
 
   function plusDay(n) {
-    window.location = formatDate(date.addDays((dayIndex = n), (updatedDate)))[1]
+    window.location = formatDate(date.addDays((dayIndex = n), (updatedDate)))
+  }
+
+  // Get the modal
+  var modal = document.getElementById('myModal');
+
+  // Get the image and insert it inside the modal
+  var img = document.getElementsByClassName('myImg');
+  var modalImg = document.getElementById("img01");
+  var captionText = document.getElementById("caption");
+  for(var i = 0; i < img.length; i++){img[i].addEventListener("click", function(){
+    modal.style.display = "block";
+    modalImg.src = this.src;
+    modalImg.width = this.width*2;
+    modalImg.height = this.height;
+    captionText.innerHTML = this.alt;
+  })}
+
+  // Get the <span> element that closes the modal
+  var span = document.getElementsByClassName("close")[0];
+
+  // When the user clicks on <span> (x), close the modal
+  span.onclick = function() { 
+    modal.style.display = "none";
   }
 </script>
 </html>
