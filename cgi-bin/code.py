@@ -31,7 +31,7 @@ class images:
             "png":"images/png",
             "jpg":"images/jpeg",
             "gif":"images/gif",
-            "ico":"images/x-icon"            }
+            "ico":"images/x-icon"}
 
         if name in os.listdir('images'):  # Security
             web.header("Content-Type", cType[ext]) # Set the Header
@@ -40,6 +40,6 @@ class images:
             raise web.notfound()
 
 if __name__ == "__main__":
-    web.config.debug = True
+    web.config.debug = False
     app = web.application(urls, globals())
     app.run()

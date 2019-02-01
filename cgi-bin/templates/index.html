@@ -1,6 +1,5 @@
 $def with (rotation, weekday, foodList, image, events, date, weekView)
 <!DOCTYPE html>
-<!-- Developed by Trey W. -->
 <html>
 <!--
                          Devloped by Trey W.
@@ -199,10 +198,11 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
         <i class="scheduleRight material-icons md-36 md-dark">arrow_forward</i>
       </a>
       </div>
-      <a href="http://127.0.0.1:8080/" class="button">
+      <a href="http://www.wadaily.net/" class="button">
         <i id="refresh" class="material-icons md-36 md-darkish">refresh</i>
         <i id="refresh" class="material-icons md-36 md-dark">refresh</i>
       </a>
+      <h5>(Working fixing images appearing 1 second after load)</h5>
   </div>
   <div class="Lunch">
     <h2>Lunch Menu</h2>
@@ -300,7 +300,7 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
     var monthIndex = date.getMonth();
     var year = date.getFullYear();
 
-    return('http://127.0.0.1:8080/?date='+ monthNames[monthIndex] + '%20' + day + '%20' + year);
+    return('http://www.wadaily.net/?date='+ monthNames[monthIndex] + '%20' + day + '%20' + year);
   }
 
   var date = new Date();
@@ -332,5 +332,19 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
   span.onclick = function() { 
     modal.style.display = "none";
   }
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  async function reload() {
+    console.log('Reloading');
+    await sleep(1000);
+    console.log('Done');
+    var images = document.getElementsByTagName('img');
+    for(var i = 0; i < images.length; i++){images[i].src = images[i].src;}
+  }
+
+  reload();
 </script>
 </html>
