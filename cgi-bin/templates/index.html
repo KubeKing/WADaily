@@ -198,7 +198,7 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
         <i class="scheduleRight material-icons md-36 md-dark">arrow_forward</i>
       </a>
       </div>
-      <a href="http://www.wadaily.net/" class="button">
+      <a href="http://127.0.0.1:8080/" class="button">
         <i id="refresh" class="material-icons md-36 md-darkish">refresh</i>
         <i id="refresh" class="material-icons md-36 md-dark">refresh</i>
       </a>
@@ -216,7 +216,10 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
   <div class="Events">
     <h2>Events</h2>
     $if events:
-        <p>$events</p>
+        <p>
+        $for event in events:
+            $event<br/>
+        </p>
     $else:
         <p>No events.</p>
   </div>
@@ -299,7 +302,7 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
     var monthIndex = date.getMonth();
     var year = date.getFullYear();
 
-    return('http://www.wadaily.net/?date='+ monthNames[monthIndex] + '%20' + day + '%20' + year);
+    return('http://127.0.0.1:8080/?date='+ monthNames[monthIndex] + '%20' + day + '%20' + year);
   }
 
   var date = new Date();

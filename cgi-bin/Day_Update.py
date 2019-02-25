@@ -4,14 +4,8 @@ import requests
 import json
 from ics import Calendar
 from datetime import datetime, date, timedelta
-from lxml import html
 from PIL import Image
 
-#year = int(datetime.now().year)
-#month = months[str(datetime.now().month)]
-#day = str(datetime.now().day)
-#weekday = weekdays[str(datetime.today().weekday())]
-#date = [(month),(day),(str(year))]
 weekdays = {'0':'Monday','1':'Tuesday','2':'Wednesday','3':'Thursday','4':'Friday','5':'Saturday','6':'Sunday'}
 months = {'1':'January','2':'February','3':'March','4':'April','5':'May',
 '6':'June','7':'July','8':'August','9':'September','10':'October','11':'November','12':'December'}
@@ -54,21 +48,32 @@ def getLunch(d, m, y):
         except:
             return('')
 
-def getAun(day):
+def getAun(d, m, y):
     try:
-        page = requests.get('https://www.woodward.edu/parents/upper-school/newsletter')
-        tree = html.fromstring(page.content)
-        aunDict = {}
-        dates = tree.xpath('//span[@class="fsDay"]/text()')
-        aunList = tree.xpath('//a[@class="fsCalendarEventLink"]/text()')
-        for i in range(len(dates)):
-            aunDict[dates[i]] = aunList[i]
+        with open('aunList.json') as json_file: 
+            data = json.load(json_file) 
+            return(data[str(m)+'/'+str(d)+'/'+str(y)])
+    except:
         try:
-            return(aunDict[str(day)])
+            c = Calendar(requests.get('https://www.woodward.edu/calendar/calendar_368.ics').text)
+            c, aunDict, lastDate = c.events, {}, []
+            c.reverse()
+            for item in c[:18]:
+                if item.name:
+                    dateMod = getLongDate(item.begin)
+                    if lastDate == dateMod:
+                        aunDict[str(dateMod[0])+'/'+str(dateMod[1])+'/'+str(dateMod[2])].append(item.name)
+                    else:
+                        aunDict[str(dateMod[0])+'/'+str(dateMod[1])+'/'+str(dateMod[2])] = [item.name]
+                    lastDate = dateMod
+            try:
+                with open('aunList.json', 'w') as outfile:
+                    json.dump(aunDict, outfile)
+                return(aunDict[str(m)+'/'+str(d)+'/'+str(y)])
+            except:
+                return('')
         except:
             return('')
-    except:
-        return('')
 
 def whatDay(m,d,y,doMath):
     try:
@@ -139,4 +144,4 @@ def week_range(date):
     return(weekData)
 
 if __name__ == "__main__":
-    print(getLunch('25', 'February', '2019'))
+    pass #For testing
