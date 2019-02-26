@@ -216,7 +216,10 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
   <div class="Events">
     <h2>Events</h2>
     $if events:
-        <p>$events</p>
+        <p>
+        $for event in events:
+            $event<br/>
+        </p>
     $else:
         <p>No events.</p>
   </div>
