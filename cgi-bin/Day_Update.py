@@ -25,9 +25,9 @@ def getShortDate(m,d,y):
 
 def getLunch(d, m, y):
     try:
-        with open('lunchList.json') as json_file: 
+        with open('json_cache\lunchList.json') as json_file: 
             data = json.load(json_file) 
-            return(data[str(m)+'/'+str(d)+'/'+str(y)])
+        return(data[str(m)+'/'+str(d)+'/'+str(y)])
     except:
         try:
             c = Calendar(requests.get('https://woodward.finalsite.com/calendar/calendar_400.ics').text)
@@ -40,7 +40,7 @@ def getLunch(d, m, y):
                     food = [value for value in food if value != '']
                     foodDict[str(dateMod[0])+'/'+str(dateMod[1])+'/'+str(dateMod[2])] = food
             try:
-                with open('lunchList.json', 'w') as outfile:
+                with open('json_cache\lunchList.json', 'w') as outfile:
                     json.dump(foodDict, outfile)
                 return(foodDict[str(m)+'/'+str(d)+'/'+str(y)])
             except:
@@ -50,15 +50,18 @@ def getLunch(d, m, y):
 
 def getAun(d, m, y):
     try:
-        with open('aunList.json') as json_file: 
-            data = json.load(json_file) 
-            return(data[str(m)+'/'+str(d)+'/'+str(y)])
+        with open('json_cache\\aunList.json') as json_file: 
+            data = json.load(json_file)
     except:
-        try:
+        data, data['Updated'] = {}, None
+    try:
+        if data['Updated'] == str(date.today()):
+            return(data[str(m)+'/'+str(d)+'/'+str(y)])
+        else:
             c = Calendar(requests.get('https://www.woodward.edu/calendar/calendar_368.ics').text)
             c, aunDict, lastDate = c.events, {}, []
             c.reverse()
-            for item in c[:18]:
+            for item in c:
                 if item.name:
                     dateMod = getLongDate(item.begin)
                     if lastDate == dateMod:
@@ -67,13 +70,14 @@ def getAun(d, m, y):
                         aunDict[str(dateMod[0])+'/'+str(dateMod[1])+'/'+str(dateMod[2])] = [item.name]
                     lastDate = dateMod
             try:
-                with open('aunList.json', 'w') as outfile:
+                aunDict['Updated'] = str(date.today())
+                with open('json_cache\\aunList.json', 'w') as outfile:
                     json.dump(aunDict, outfile)
                 return(aunDict[str(m)+'/'+str(d)+'/'+str(y)])
             except:
                 return('')
-        except:
-            return('')
+    except:
+        return('')
 
 def whatDay(m,d,y,doMath):
     try:
@@ -112,13 +116,25 @@ def makeImage(rotation, scale):
         image = {'src':'', 'bottomPadding':'-10px', 'halfWidth':'0', 'height':'0'}
     return(image)
 
-def week_range(date):
+def week_range(idate):
+    fastDate = str(date.today())
+    year, week, dow = idate.isocalendar()
+    try:
+        with open('json_cache\weekData.json') as json_file: 
+            data = json.load(json_file)
+    except:
+        data = {}
+    try:
+        holder = data[str(week)+'/'+str(year)]
+        if holder['Updated'] == fastDate:
+            return(holder)
+    except:
+        pass
     weekData = {'rotations': [], 'misc': {}}
-    year, week, dow = date.isocalendar()
     if dow == 7:
-        start_date = date
+        start_date = idate
     else:
-        start_date = date - timedelta(dow)
+        start_date = idate - timedelta(dow)
 
     n = start_date + timedelta(1)
     for i in range(5):
@@ -141,6 +157,10 @@ def week_range(date):
     for i in days:
         i['rotation']['bottomPadding'] = ((str((tallest - float(i['rotation']['height']))/2))+'px')
     weekData['misc']['tallest'] = ((str(tallest/2))+'px')
+    weekData['Updated'] = fastDate
+    data[str(week)+'/'+str(year)] = weekData
+    with open('json_cache\weekData.json', 'w') as outfile:
+        json.dump(data, outfile)
     return(weekData)
 
 if __name__ == "__main__":
