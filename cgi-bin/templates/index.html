@@ -1,4 +1,4 @@
-$def with (rotation, weekday, foodList, image, events, date, weekView)
+$def with (rotation, weekday, foodList, image, events, date, weekView, lastUpdate)
 <!DOCTYPE html>
 <html>
 <!--
@@ -316,7 +316,7 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
   var updatedDate = document.getElementById('date').innerHTML;
 
   function plusDay(n) {
-    window.location = formatDate(date.addDays((dayIndex = n), (updatedDate)))
+    window.location = formatDate(date.addDays((dayIndex = n), (updatedDate)));
   }
 
   // Get the modal
@@ -346,14 +346,26 @@ $def with (rotation, weekday, foodList, image, events, date, weekView)
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async function reload() {
-    console.log('Reloading');
-    await sleep(1000);
-    console.log('Done');
-    var images = document.getElementsByTagName('img');
-    for(var i = 0; i < images.length; i++){images[i].src = images[i].src;}
+  function getMeta(metaName) {
+    const metas = document.getElementsByTagName('meta');
+  
+    for (let i = 0; i < metas.length; i++) {
+      if (metas[i].getAttribute('name') === metaName) {
+        return metas[i].getAttribute('content');
+      }
+    }
+  
+    return '';
+  }  
+
+  window.onfocus = windowFocus;
+  function windowFocus() {
+    if(date.getDate() != $lastUpdate){
+      window.location = "http://www.wadaily.net/";
+      console.log('Page Outdated');
+    }
   }
 
-  reload();
+
 </script>
 </html>
