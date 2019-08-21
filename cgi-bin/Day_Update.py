@@ -29,7 +29,7 @@ def getLunch(d, m, y):
     if int(lm) <= 9:
         lm = '0'+str(lm)
     try:
-        with open('json_cache\lunchList.json') as json_file:
+        with open('json_cache/lunchList.json') as json_file:
             data = json.load(json_file)
         return(data[str(y)+'-'+str(lm)+'-'+str(d)])
     except:
@@ -45,9 +45,8 @@ def getLunch(d, m, y):
                     if holder['food'] and holder['food']['name']:
                         li.append(holder['food']['name'])
                 menu[day['date']] = li[:8]
-            print(menu)
             try:
-                with open('json_cache\lunchList.json', 'w') as outfile:
+                with open('json_cache/lunchList.json', 'w') as outfile:
                     json.dump(menu, outfile)
                 return(menu[str(y)+'-'+str(lm)+'-'+str(d)])
             except:
@@ -57,7 +56,7 @@ def getLunch(d, m, y):
 
 def getAun(d, m, y):
     try:
-        with open('json_cache\\aunList.json') as json_file:
+        with open('json_cache/aunList.json') as json_file:
             data = json.load(json_file)
     except:
         data, data['Updated'] = {}, None
@@ -78,7 +77,7 @@ def getAun(d, m, y):
                     lastDate = dateMod
             try:
                 aunDict['Updated'] = str(date.today())
-                with open('json_cache\\aunList.json', 'w') as outfile:
+                with open('json_cache/aunList.json', 'w') as outfile:
                     json.dump(aunDict, outfile)
                 return(aunDict[str(m)+'/'+str(d)+'/'+str(y)])
             except:
@@ -127,7 +126,7 @@ def week_range(idate):
     fastDate = str(date.today())
     year, week, dow = idate.isocalendar()
     try:
-        with open('json_cache\weekData.json') as json_file: 
+        with open('json_cache/weekData.json') as json_file: 
             data = json.load(json_file)
     except:
         data = {}
@@ -166,7 +165,7 @@ def week_range(idate):
     weekData['misc']['tallest'] = ((str(tallest/2))+'px')
     weekData['Updated'] = fastDate
     data[str(week)+'/'+str(year)] = weekData
-    with open('json_cache\weekData.json', 'w') as outfile:
+    with open('json_cache/weekData.json', 'w') as outfile:
         json.dump(data, outfile)
     return(weekData)
 
