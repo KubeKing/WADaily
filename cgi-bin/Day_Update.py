@@ -2,6 +2,7 @@
 #Created by Trey W.
 import requests
 import json
+from lxml import html
 from ics import Calendar
 from datetime import datetime, date, timedelta
 from PIL import Image
@@ -24,25 +25,31 @@ def getShortDate(m,d,y):
     return(datetime((int(y)), (int(inv_months[str(m)])), (int(d))))
 
 def getLunch(d, m, y):
+    lm = str(inv_months[str(m)])
+    if int(lm) <= 9:
+        lm = '0'+str(lm)
     try:
-        with open('json_cache\lunchList.json') as json_file: 
-            data = json.load(json_file) 
-        return(data[str(m)+'/'+str(d)+'/'+str(y)])
+        with open('json_cache\lunchList.json') as json_file:
+            data = json.load(json_file)
+        return(data[str(y)+'-'+str(lm)+'-'+str(d)])
     except:
         try:
-            c = Calendar(requests.get('https://woodward.finalsite.com/calendar/calendar_400.ics').text)
-            c, foodDict = c.events, {}
-            c.reverse()
-            for item in c:
-                if item.description:
-                    dateMod = getLongDate(item.begin)
-                    food = (item.description).split('\n')
-                    food = [value for value in food if value != '']
-                    foodDict[str(dateMod[0])+'/'+str(dateMod[1])+'/'+str(dateMod[2])] = food
+            page = requests.get('https://woodward.nutrislice.com/menu/api/weeks/school/upper-school/menu-type/lunch/'+str(y)+'/'+lm+'/'+str(d)+'/?format=json')
+            tree = html.fromstring(page.content)
+            allText = tree.xpath('//*/text()')[0]
+            allText = json.loads(allText)
+            menu = {}
+            for day in allText['days']:
+                li = []
+                for holder in day['menu_items']:
+                    if holder['food'] and holder['food']['name']:
+                        li.append(holder['food']['name'])
+                menu[day['date']] = li[:8]
+            print(menu)
             try:
                 with open('json_cache\lunchList.json', 'w') as outfile:
-                    json.dump(foodDict, outfile)
-                return(foodDict[str(m)+'/'+str(d)+'/'+str(y)])
+                    json.dump(menu, outfile)
+                return(menu[str(y)+'-'+str(lm)+'-'+str(d)])
             except:
                 return('')
         except:
@@ -50,7 +57,7 @@ def getLunch(d, m, y):
 
 def getAun(d, m, y):
     try:
-        with open('json_cache\\aunList.json') as json_file: 
+        with open('json_cache\\aunList.json') as json_file:
             data = json.load(json_file)
     except:
         data, data['Updated'] = {}, None

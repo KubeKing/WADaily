@@ -360,6 +360,7 @@ $def with (rotation, weekday, foodList, image, events, date, weekView, lastUpdat
 
   window.onfocus = windowFocus;
   function windowFocus() {
+    var date = new Date();
     if(date.getDate() != $lastUpdate){
       window.location = "http://www.wadaily.net/";
       console.log('Page Outdated');
