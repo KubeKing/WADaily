@@ -36,6 +36,7 @@ $def with (rotation, weekday, foodList, image, events, date, weekView, lastUpdat
     ul{text-align: center;}
     .scheduleLeft {margin-right:10px;position:relative;bottom:$image['bottomPadding'];cursor: pointer;}
     #scheduleImage {display:inline-block;position:relative;}
+    #lunchTable {display:inline-block;position:relative;}
     #weekView {display:none;position:relative;}
     .weekImg {position:relative;margin-right:-4px;object-fit: cover;object-position: 100% 0;}
     .days {font-size:145%}
@@ -88,14 +89,14 @@ $def with (rotation, weekday, foodList, image, events, date, weekView, lastUpdat
       background-color: rgb(0,0,0); /* Fallback color */
       background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
     }
-    
+
     /* Modal Content (image) */
     .modal-content {
       margin: auto;
       display: block;
       max-width: 700px;
     }
-    
+
     /* Caption of Modal Image */
     #caption {
       margin: auto;
@@ -107,25 +108,25 @@ $def with (rotation, weekday, foodList, image, events, date, weekView, lastUpdat
       padding: 10px 0;
       height: 150px;
     }
-    
+
     /* Add Animation */
-    .modal-content, #caption {  
+    .modal-content, #caption {
       -webkit-animation-name: zoom;
       -webkit-animation-duration: 0.6s;
       animation-name: zoom;
       animation-duration: 0.6s;
     }
-    
+
     @-webkit-keyframes zoom {
-      from {-webkit-transform: scale(0)} 
+      from {-webkit-transform: scale(0)}
       to {-webkit-transform: scale(1)}
     }
-    
+
     @keyframes zoom {
       from {transform: scale(0.1)} 
       to {transform: scale(1)}
     }
-    
+
     /* The Close Button */
     .close {
       position: absolute;
@@ -136,14 +137,14 @@ $def with (rotation, weekday, foodList, image, events, date, weekView, lastUpdat
       font-weight: bold;
       transition: 0.3s;
     }
-    
+
     .close:hover,
     .close:focus {
       color: #bbb;
       text-decoration: none;
       cursor: pointer;
     }
-    
+
     /* 100% Image Width on Smaller Screens */
     @media only screen and (max-width: 700px){
       .modal-content {
@@ -176,7 +177,7 @@ $def with (rotation, weekday, foodList, image, events, date, weekView, lastUpdat
       </div>
       <p id="bottomData" style="display:none">$weekView['misc']['tallest'];$image['bottomPadding']</p>
       <div>
-      
+
       <a = href="#" onclick="plusDay(-1)"class="button">
         <i class="scheduleLeft material-icons md-36 md-darkish">arrow_backward</i>
         <i class="scheduleLeft material-icons md-36 md-dark">arrow_backward</i>
@@ -185,7 +186,7 @@ $def with (rotation, weekday, foodList, image, events, date, weekView, lastUpdat
           <img id="scheduleImage" src=$image['src'] alt=$image['alt'] width=$image['width'] height=$image['height'] onerror="ImgError(this)">
       $else:
           <b id="weekdayDi" style="display:inline-block;margin-left:30px;margin-right:30px;">$weekday</b>
-        
+
       <table id="weekView" style="border-collapse:collapse;right:6px;">
       <tr>
       $for n in weekView['rotations']:
@@ -213,10 +214,22 @@ $def with (rotation, weekday, foodList, image, events, date, weekView, lastUpdat
   <div class="Lunch">
     <h2>Lunch Menu</h2>
     $if foodList:
-        <p>
-        $for food in foodList:
-            $food<br/>
-        </p>
+      <table id="lunchTable">
+        <tr>
+          <td style="padding:0 15px 0 15px;"><b>West Commons</b></td>
+          <td style="padding:0 15px 0 15px;"><b>Dining Hall</b></td>
+        </tr>
+        <tr>
+          <td style="padding:0 15px 0 15px;">
+            $for food in foodList[1]:
+              $food<br/>
+          </td>
+          <td style="padding:0 15px 0 15px;">
+            $for food in foodList[0]:
+              $food<br/>
+            </td>
+        </tr>
+      </table>
     $else:
         Could not find the <b>lunch</b>!
   </div>
@@ -240,7 +253,6 @@ $def with (rotation, weekday, foodList, image, events, date, weekView, lastUpdat
       <img class="modal-content" id="img01">
       <div id="caption"></div>
   </div>
-    
 </body>
 
 <script>

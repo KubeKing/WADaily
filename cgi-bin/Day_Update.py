@@ -34,17 +34,16 @@ def getLunch(d, m, y):
         return(data[str(y)+'-'+str(lm)+'-'+str(d)])
     except:
         try:
-            page = requests.get('https://woodward.nutrislice.com/menu/api/weeks/school/upper-school/menu-type/lunch/'+str(y)+'/'+lm+'/'+str(d)+'/?format=json')
-            tree = html.fromstring(page.content)
-            allText = tree.xpath('//*/text()')[0]
-            allText = json.loads(allText)
-            menu = {}
-            for day in allText['days']:
-                li = []
-                for holder in day['menu_items']:
-                    if holder['food'] and holder['food']['name']:
-                        li.append(holder['food']['name'])
-                menu[day['date']] = li[:8]
+            menu, allText, urls = {}, [], ['https://woodward.nutrislice.com/menu/api/weeks/digest/school/upper-school/menu-type/lunch/date/'+str(y)+'/'+lm+'/'+str(d)+'/?format=json', 'https://woodward.nutrislice.com/menu/api/weeks/digest/school/west-commons/menu-type/lunch/date/'+str(y)+'/'+lm+'/'+str(d)+'/?format/=json']
+            for url in urls:
+                page = requests.get(url)
+                tree = html.fromstring(page.content)
+                allText.append(json.loads(tree.xpath('//*/text()')[0]))
+
+            for day in allText[0]:
+                menu[day['date']] = [day['menu_items'][:8]]
+            for day in allText[1]:
+                menu[day['date']] += [day['menu_items'][:8]]
             try:
                 with open('json_cache/lunchList.json', 'w') as outfile:
                     json.dump(menu, outfile)
@@ -66,23 +65,23 @@ def getAun(d, m, y):
         else:
             c = Calendar(requests.get('https://www.woodward.edu/calendar/calendar_368.ics').text)
             c, aunDict, lastDate = c.events, {}, []
-            c.reverse()
             for item in c:
                 if item.name:
                     dateMod = getLongDate(item.begin)
-                    if lastDate == dateMod:
-                        aunDict[str(dateMod[0])+'/'+str(dateMod[1])+'/'+str(dateMod[2])].append(item.name)
+                    dateMod = str(dateMod[0])+'/'+str(dateMod[1])+'/'+str(dateMod[2])
+                    if dateMod in lastDate:
+                        aunDict[dateMod].append(item.name)
                     else:
-                        aunDict[str(dateMod[0])+'/'+str(dateMod[1])+'/'+str(dateMod[2])] = [item.name]
-                    lastDate = dateMod
+                        aunDict[dateMod] = [item.name]
+                        lastDate.append(dateMod)
             try:
                 aunDict['Updated'] = str(date.today())
                 with open('json_cache/aunList.json', 'w') as outfile:
                     json.dump(aunDict, outfile)
                 return(aunDict[str(m)+'/'+str(d)+'/'+str(y)])
             except:
-                return('')
-    except:
+                return('Failed Update')
+    except Exception as e:
         return('')
 
 def whatDay(m,d,y,doMath):
@@ -126,7 +125,7 @@ def week_range(idate):
     fastDate = str(date.today())
     year, week, dow = idate.isocalendar()
     try:
-        with open('json_cache/weekData.json') as json_file: 
+        with open('json_cache/weekData.json') as json_file:
             data = json.load(json_file)
     except:
         data = {}
