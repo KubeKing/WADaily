@@ -28,6 +28,8 @@ def getLunch(d, m, y):
     lm = str(inv_months[str(m)])
     if int(lm) <= 9:
         lm = '0'+str(lm)
+    if int(d) <= 9:
+        d = '0'+str(d)
     try:
         with open('json_cache/lunchList.json') as json_file:
             data = json.load(json_file)
