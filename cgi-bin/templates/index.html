@@ -206,7 +206,7 @@ $def with (rotation, weekday, foodList, image, events, date, weekView, lastUpdat
         <i class="scheduleRight material-icons md-36 md-dark">arrow_forward</i>
       </a>
       </div>
-      <a href="http://www.wadaily.net/" class="button">
+      <a href="https://www.wadaily.net/" class="button">
         <i id="refresh" class="material-icons md-36 md-darkish">refresh</i>
         <i id="refresh" class="material-icons md-36 md-dark">refresh</i>
       </a>
@@ -321,7 +321,7 @@ $def with (rotation, weekday, foodList, image, events, date, weekView, lastUpdat
     var monthIndex = date.getMonth();
     var year = date.getFullYear();
 
-    return('http://www.wadaily.net/?date='+ monthNames[monthIndex] + '%20' + day + '%20' + year);
+    return('https://www.wadaily.net/?date='+ monthNames[monthIndex] + '%20' + day + '%20' + year);
   }
 
   var date = new Date();
@@ -374,7 +374,7 @@ $def with (rotation, weekday, foodList, image, events, date, weekView, lastUpdat
   function windowFocus() {
     var date = new Date();
     if(date.getDate() != $lastUpdate){
-      window.location = "http://www.wadaily.net/";
+      window.location = "https://www.wadaily.net/";
       console.log('Page Outdated');
     }
   }
